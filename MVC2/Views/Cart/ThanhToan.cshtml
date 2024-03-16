@@ -1,0 +1,144 @@
+﻿@model MVC2.ViewModels.CartCustomer
+
+@{
+    ViewData["Title"] = "ThanhToan";
+}
+
+<!-- Checkout Page Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <h1 class="mb-4">Giao Hàng Đến</h1>
+        <form asp-controller="Cart" asp-action="ThanhToan">
+            <div class="row g-5">
+                <div class="col-md-12 col-lg-6 col-xl-7">
+                    @if(Model.khachhang != null)
+                    {
+                      <div class="form-item">
+                        <label class="form-label my-3">FullName<sup>*</sup></label>
+                        <input type="text" name="Fullname" class="form-control" placeholder="@Model.khachhang.Fullname">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Phone <sup>*</sup></label>
+                        <input type="text" name="Phone" class="form-control" placeholder="@Model.khachhang.Phone">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Email<sup>*</sup></label>
+                        <input type="text" name="Email" class="form-control" placeholder="@Model.khachhang.Email">
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Address<sup>*</sup></label>
+                            <input type="text" name="Position" class="form-control" placeholder="@Model.khachhang.Position" value="@Model.khachhang.Position">
+                    </div>  
+                    }
+                    @if (Model.khachhang == null)
+                    {
+                        <div class="form-item">
+                            <label class="form-label my-3">FullName<sup>*</sup></label>
+                            <input type="text" name="Fullname" class="form-control">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label my-3">Phone <sup>*</sup></label>
+                            <input type="text" name="Phone" class="form-control">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label my-3">Email<sup>*</sup></label>
+                            <input type="text" name="Email" class="form-control">
+                        </div>
+                        <div class="form-item">
+                            <label class="form-label my-3">Address<sup>*</sup></label>
+                            <input type="text" name="Position" class="form-control">
+                        </div>
+                    }
+                    
+                    
+                    <div class="form-item mt-3">
+                        <textarea name="text" class="form-control" spellcheck="false" cols="30" rows="8" placeholder="Note"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-6 col-xl-5">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Carts)
+                                {
+                                    <tr>
+                                        <th scope="row">
+                                            <div class="d-flex align-items-center">
+                                                <img src="~/img/@item.Image" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                                            </div>
+                                        </th>
+                                        <td>
+                                            <a asp-action="Detail" asp-controller="Menu" asp-route-id="@item.Id">
+                                                <p class="mb-0 mt-4">@item.Name</p>
+                                            </a>
+
+                                        </td>
+                                        <td>
+                                            <p class="mb-0 mt-4">@item.Price</p>
+                                        </td>
+                                        <td>
+                                            <div class="input-group quantity mt-4" style="width: 100px;">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                                        <i class="fa fa-minus"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="text" class="form-control form-control-sm text-center border-0" value="@item.SoLuong">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <p class="mb-0 mt-4">@item.ThanhTien</p>
+                                        </td>
+                                        <td>
+                                            <a asp-action="RemoveCart" asp-controller="Cart" asp-route-id="@item.Id" class="btn btn-md rounded-circle bg-light border mt-4">
+                                                <i class="fa fa-times text-danger"></i>
+                                            </a>
+                                        </td>
+
+                                    </tr>
+                                }
+
+
+                                <tr>
+                                    <th scope="row">
+                                    </th>
+                                    <td class="py-5"></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5">
+                                        <p class="mb-0 text-dark py-3">Subtotal</p>
+                                    </td>
+                                    <td class="py-5">
+                                        <div class="py-3 border-bottom border-top">
+                                            <p class="mb-0 text-dark">@Model.Carts.Sum(p=>p.ThanhTien)</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                
+                            </tbody>
+                        </table>
+                    </div>                                                        
+                    <div class="row g-4 text-center align-items-center justify-content-center pt-4">
+                        <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">ĐẶT HÀNG</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Checkout Page End -->
