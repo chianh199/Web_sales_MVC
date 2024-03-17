@@ -455,7 +455,16 @@
 .pagination {
     display: inline-block;
 }
-  
+.pagination-container {
+    display: inline-block;
+} 
+.pagination-container .pagination ul li a{
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+}
 .pagination a {
     color: var(--bs-dark);
     padding: 10px 16px;

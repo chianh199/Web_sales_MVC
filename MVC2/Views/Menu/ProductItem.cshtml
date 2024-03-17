@@ -1,5 +1,38 @@
-﻿@model IEnumerable<MVC2.ViewModels.ProductVM>
+﻿@using X.PagedList.Mvc.Core;
+@model X.PagedList.IPagedList<MVC2.ViewModels.ProductVM>
+<style>
+    .ul.pagination {
+        display: inline-block;
+        padding: 0;
+        margin: 0;
+    }
 
+    ul.pagination li {
+        display: inline;
+    }
+
+        ul.pagination li a {
+            color: #81c408;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            
+        }
+
+            ul.pagination li a.active {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            ul.pagination li a:hover:not(.active) {
+                background-color: #ddd;
+            }
+                ul.pagination li span {
+                    display:none;
+                }
+
+</style>
 @foreach (var product in Model)
 {
     <div class="col-md-6 col-lg-6 col-xl-4">
@@ -23,3 +56,12 @@
         </div>
     </div>
 }
+
+
+
+<div class="col-12">
+    <div class="pagination d-flex justify-content-center mt-5">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }))
+    </div>
+</div>
+

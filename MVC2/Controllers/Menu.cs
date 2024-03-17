@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC2.ViewModels;
 using MVC2.Data2;
+using X.PagedList;
 
 namespace MVC2.Controllers
 {
@@ -9,14 +10,14 @@ namespace MVC2.Controllers
         private readonly Food2Context db;
 
         public Menu(Food2Context context) => db = context;
-        public IActionResult Index(int? loai)
+        public IActionResult Index(int? loai, int? page)
         {
             var products = db.Products.AsQueryable();
             if (loai.HasValue)
             {
                 products = products.Where(p => p.Catalog == loai.Value);
             }
-            var result = products.Select(p => new ProductVM
+            var result = products.OrderBy(p=>p.Catalog).Select(p => new ProductVM
             {
                 Id = p.Id,
                 Name = p.Name ?? "",
@@ -25,7 +26,10 @@ namespace MVC2.Controllers
                 Price = p.Price,
                 catelog = p.CatalogNavigation.Name ?? ""
             });
-            return View(result);
+            int pagesize = 6;
+            int pagenumber = page == null || page < 0 ? 1 : page.Value;
+            PagedList<ProductVM> lst = new PagedList<ProductVM>(result, pagenumber, pagesize);
+            return View(lst);
         }
 
         public IActionResult Search(string? query)
