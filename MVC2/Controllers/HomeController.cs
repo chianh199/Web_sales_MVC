@@ -21,6 +21,7 @@ namespace MVC2.Controllers
         [Route("/404")]
         public IActionResult PageNotFound()
         {
+            
             return View();
         }
 

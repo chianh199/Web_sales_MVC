@@ -22,7 +22,7 @@ namespace MVC2.Controllers
         {
             var gioHang = Carts;
             var item = gioHang.SingleOrDefault(p => p.Id == id);
-            if (item == null)
+            if (item == null)// chua co product nay
             {
                 var hangHoa = db.Products.SingleOrDefault(p => p.Id == id);
                 if (hangHoa == null)

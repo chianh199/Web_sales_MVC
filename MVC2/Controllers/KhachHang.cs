@@ -82,8 +82,8 @@ namespace MVC2.Controllers
                 var user = await db.Khachhangs.SingleOrDefaultAsync(kh => kh.Email == login.username && kh.Pwd == login.password);
                 if (user == null)
                 {
-                    ModelState.AddModelError("error", "Not found this user");
-                    return Redirect("/404");
+                    ModelState.AddModelError("user", "Not found your account !");
+                    return View();
                 }
                 
                 var claims = new List<Claim>
