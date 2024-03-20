@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using MVC2.Helpers;
+using MVC2.Interfaces;
 
 namespace MVC2.Controllers
 {
@@ -22,7 +23,7 @@ namespace MVC2.Controllers
         {
             db = context;
             _mapper = mapper;
-        } 
+        }
         [HttpGet]
         public IActionResult DangKy()
         {
@@ -31,11 +32,11 @@ namespace MVC2.Controllers
         [HttpPost]
         public IActionResult DangKy(RegisterVM register)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    
+
                     var kh = _mapper.Map<Khachhang>(register);
                     //kh.Id = db.Khachhangs.Max(k => k.Id) + 1;
 
@@ -69,7 +70,7 @@ namespace MVC2.Controllers
         public async Task<IActionResult> Login(string? ReturnUrl, LoginVM login)
         {
             ViewBag.ReturnUrl = ReturnUrl;
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 byte[] buffer = Encoding.UTF8.GetBytes(login.password);
                 MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
@@ -85,7 +86,7 @@ namespace MVC2.Controllers
                     ModelState.AddModelError("user", "Not found your account !");
                     return View();
                 }
-                
+
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Fullname),

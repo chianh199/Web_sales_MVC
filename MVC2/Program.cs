@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MVC2.Data2;
-using MVC2.Helpers;
+using MVC2.Interfaces;
+using MVC2.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,10 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddDbContext<Food2Context>(Options =>
 {
     Options.UseSqlServer(builder.Configuration.GetConnectionString("Food"));
 });
+
+
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -32,7 +36,10 @@ builder.Services.AddSession(options =>
 	options.Cookie.IsEssential = true;
 });
 // dang ky automapper
-builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+//builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<IMenuRepository, MenuRepository>();
+builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
