@@ -95,8 +95,10 @@
                     <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
                         <h5 class="mb-0 ps-4 me-4"></h5>
                         <p class="mb-0 pe-4">@Model.Sum(p => p.ThanhTien)</p>
-                    </div>
-                    <a asp-controller="KhachHang" asp-action="Login"><button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Thanh Toán</button></a>
+                    </div>                  
+                    <a id="thanhtoan" asp-controller="Cart" asp-action="ThanhToan">
+                        <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Thanh Toán</button>
+                    </a>
                     
                 </div>
             </div>
@@ -104,3 +106,10 @@
     </div>
 </div>
 <!-- Cart Page End -->
+@section Script{
+    <script>
+        function myFunction() {
+            document.getElementById("demo").innerHTML = "Hello World";
+        }
+    </script>
+}

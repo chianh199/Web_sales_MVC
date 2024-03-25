@@ -60,9 +60,10 @@ namespace MVC2.Controllers
             return View();
         }
         [HttpGet]
-        public IActionResult Login(string? ReturnUrl)
+        public IActionResult Login(string? ReturnUrl, int? tt)
         {
             ViewBag.ReturnUrl = ReturnUrl;
+            ViewBag.tt = tt;
             return View();
         }
 

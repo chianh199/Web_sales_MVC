@@ -33,9 +33,13 @@
                         <div class="col-md-6 ">
                             <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary ">ĐĂNG NHẬP</button>
         </form>
-                            <a asp-action="ThanhToan" asp-controller="Cart"><button type="button" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary mt-4">ĐẶT HÀNG KHÔNG CẦN ĐĂNG NHẬP</button></a>
-     </div>
-    
+                            
+        @if (!Context.User.Identity.IsAuthenticated && @ViewBag.tt==1)
+        {
+            <a asp-action="ThanhToan" asp-controller="Cart" asp-route-kh="0"><button type="button" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary mt-4">ĐẶT HÀNG KHÔNG CẦN ĐĂNG NHẬP</button></a>
+
+        }
+     </div>  
                     </div>
                 </div>
             </div>

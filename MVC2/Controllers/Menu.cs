@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MVC2.ViewModels;
-using MVC2.Data2;
-using X.PagedList;
 using MVC2.Interfaces;
 
 

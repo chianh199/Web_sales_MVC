@@ -1,141 +1,63 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MVC2.Data2;
 using MVC2.ViewModels;
+using MVC2.Interfaces;
+using Microsoft.AspNetCore.Http;
 using MVC2.Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
+
 namespace MVC2.Controllers
 {
 	public class Cart : Controller
 	{
-        private readonly Food2Context db;
+		private readonly ICartRepository _cart;
 
-        public Cart(Food2Context context) => db = context;
-        const string CART_KEY = "MYCART";
-        public List<CartItem> Carts => HttpContext.Session.Get<List<CartItem>>(CART_KEY) ?? new List<CartItem>();
+		public Cart(ICartRepository cartRepository)
+        {
+            _cart = cartRepository;
+        }
+        
 
         public IActionResult Index()
         {
-            return View(Carts);
+            var check = _cart.GetCartItems();
+            return View(check);
         }
         public IActionResult AddToCart(int id, int quantity = 1)
         {
-            var gioHang = Carts;
-            var item = gioHang.SingleOrDefault(p => p.Id == id);
-            if (item == null)// chua co product nay
-            {
-                var hangHoa = db.Products.SingleOrDefault(p => p.Id == id);
-                if (hangHoa == null)
-                {
-                    TempData["Message"] = $"Không tìm thấy hàng hóa có mã {id}";
-                    return Redirect("/404");
-                }
-                item = new CartItem
-                {
-                    Id = hangHoa.Id,
-                    Name = hangHoa.Name,
-                    Price = hangHoa.Price ?? 0,
-                    Image = hangHoa.Image ?? "",
-                    SoLuong = quantity
-                };
-                gioHang.Add(item);
-            }
-            else
-            {
-                item.SoLuong += quantity;
-            }
-
-            HttpContext.Session.Set(CART_KEY, gioHang);
-
+            var add = _cart.AddToCart(id, quantity);
             return RedirectToAction("Index");
         }
         public IActionResult RemoveCart(int id)
         {
-            var gioHang = Carts;
-            var item = gioHang.SingleOrDefault(p => p.Id == id);
-            if (item != null)
-            {
-                gioHang.Remove(item);
-                HttpContext.Session.Set(CART_KEY, gioHang);
-            }
+            _cart.RemoveCart(id);
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public IActionResult ThanhToan()
+        public IActionResult ThanhToan(int kh = 1)
         {
-            if (Carts.Count == 0)
-            {
-                ModelState.AddModelError("error", "giỏ hàng của bạn đang trống !");
-                return Redirect("/Cart/Index");
+           
+            var check = _cart.GetCartItems();
+            if(check.Count() == 0) {
+                return Redirect("/Cart");
             }
-            // check khach hang co dang nhap khong
-            CartCustomer cartCustomer = new CartCustomer();
-            cartCustomer.Carts = Carts;
-            var customerId = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID)?.Value;
-            if (customerId != null)
+            var customerId = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID)?.Value??"0";
+            if (customerId == "0" && kh ==1)
             {
-                var kh = db.Khachhangs.SingleOrDefault(p=>p.Id.Equals(int.Parse(customerId)));
-                
-                cartCustomer.khachhang = kh;
-                
+                ViewBag.mess = "1";
+                return Redirect("/KhachHang/Login?tt=1");
             }
-            // khach hang dat hang khong can dang nhap
-            return View(cartCustomer);
+            var thu = int.Parse(customerId);
+            var checklogin = _cart.ThanhToan(int.Parse(customerId));
+            return View(checklogin);
         }
         [HttpPost]
         public IActionResult ThanhToan(OrderVM? model)
         {
             if (ModelState.IsValid)
             {
-                var customerId = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID)?.Value;
-                
- 
-
-                var order = new Order
-                {
-                    Khachhang = int.Parse(customerId),
-                    Fullname = model.Fullname,
-                    Phone = model.Phone,
-                    Email = model.Email,
-                    Position = model.Position,
-                    Total = ((int)Carts.Sum(p => p.ThanhTien)),
-                    Status = "Đặt hàng thành công",
-                    DateCreate = DateTime.Now
-                };
-
-                db.Database.BeginTransaction();
-                try
-                {
-                    db.Database.CommitTransaction();
-                    db.Add(order);
-                    db.SaveChanges();
-
-                    var cthds = new List<ChitietBill>();
-
-                    foreach (var item in Carts)
-                    {
-                        cthds.Add(new ChitietBill
-                        {
-                            Bill = order.Id,
-                            Product = item.Id,
-                            Quantity = item.SoLuong,
-                            Price = item.Price,
-                            Total = (int)item.ThanhTien
-                        });
-                    }
-                    db.AddRange(cthds);
-                    db.SaveChanges();
-
-                    HttpContext.Session.Set<List<CartItem>>(CART_KEY, new List<CartItem>());
-                    return Redirect("/");
-                }
-                catch
-                {
-                    db.Database.RollbackTransaction();
-                }
+               _cart.ThanhToan(model);
             }
-            return View(Carts);
+            return Redirect("/Cart");
         }
 
     }

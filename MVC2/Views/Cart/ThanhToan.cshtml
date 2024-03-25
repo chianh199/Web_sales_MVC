@@ -8,22 +8,23 @@
 <div class="container-fluid py-5">
     <div class="container py-5">
         <h1 class="mb-4">Giao Hàng Đến</h1>
-        <form asp-controller="Cart" asp-action="ThanhToan">
+        <form asp-controller="Cart" asp-action="ThanhToan" name="thanhtoan">
             <div class="row g-5">
                 <div class="col-md-12 col-lg-6 col-xl-7">
                     @if(Model.khachhang != null)
                     {
+                      <input type="hidden" name="Khachhang" value="@Model.khachhang.Id">
                       <div class="form-item">
                         <label class="form-label my-3">FullName<sup>*</sup></label>
-                        <input type="text" name="Fullname" class="form-control" placeholder="@Model.khachhang.Fullname">
+                            <input type="text" name="Fullname" class="form-control" placeholder="@Model.khachhang.Fullname" value="@Model.khachhang.Fullname">
                     </div>
                     <div class="form-item">
                         <label class="form-label my-3">Phone <sup>*</sup></label>
-                        <input type="text" name="Phone" class="form-control" placeholder="@Model.khachhang.Phone">
+                            <input type="text" name="Phone" class="form-control" placeholder="@Model.khachhang.Phone" value="@Model.khachhang.Phone">
                     </div>
                     <div class="form-item">
                         <label class="form-label my-3">Email<sup>*</sup></label>
-                        <input type="text" name="Email" class="form-control" placeholder="@Model.khachhang.Email">
+                            <input type="text" name="Email" class="form-control" placeholder="@Model.khachhang.Email" value="@Model.khachhang.Email">
                     </div>
                     <div class="form-item">
                         <label class="form-label my-3">Address<sup>*</sup></label>
@@ -125,6 +126,7 @@
                                     <td class="py-5">
                                         <div class="py-3 border-bottom border-top">
                                             <p class="mb-0 text-dark">@Model.Carts.Sum(p=>p.ThanhTien)</p>
+                                            <input type="hidden" name="Total" value="@Model.Carts.Sum(p=>p.ThanhTien)" />
                                         </div>
                                     </td>
                                 </tr>

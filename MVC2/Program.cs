@@ -8,15 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddDbContext<Food2Context>(Options =>
 {
     Options.UseSqlServer(builder.Configuration.GetConnectionString("Food"));
 });
-
-
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -28,18 +25,24 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddDistributedMemoryCache();
-
 builder.Services.AddSession(options =>
 {
-	//options.IdleTimeout = TimeSpan.FromMinutes(3);
+	options.IdleTimeout = TimeSpan.FromMinutes(5);
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
+    options.Cookie.Name = "123";
 });
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<ICartRepository, CartRepository>();
+
 // dang ky automapper
 //builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
