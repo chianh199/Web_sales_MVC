@@ -12,17 +12,21 @@ using Microsoft.AspNetCore.Authorization;
 using MVC2.Helpers;
 using MVC2.Interfaces;
 
+
 namespace MVC2.Controllers
 {
     public class KhachHang : Controller
     {
         private readonly Food2Context db;
         private readonly IMapper _mapper;
-
-        public KhachHang(Food2Context context, IMapper mapper)
+        private readonly ICartRepository _cart;
+        const string CART_KEY = "MYCART";
+        public List<CartItem> Carts => HttpContext.Session.Get<List<CartItem>>(CART_KEY) ?? new List<CartItem>();
+        public KhachHang(Food2Context context, IMapper mapper, ICartRepository cart)
         {
             db = context;
             _mapper = mapper;
+            _cart = cart;
         }
         [HttpGet]
         public IActionResult DangKy()
@@ -90,7 +94,7 @@ namespace MVC2.Controllers
 
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.Fullname),
+                    new Claim(ClaimTypes.Name, user.Email),
                     new Claim(MySetting.CLAIM_CUSTOMERID, user.Id.ToString())
                 };
                 var claimsIdentity = new ClaimsIdentity(
@@ -99,7 +103,16 @@ namespace MVC2.Controllers
                 var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
                 await HttpContext.SignInAsync(claimsPrincipal);
-
+                if(Carts.Count() != 0)
+                {
+                    foreach(var cart in Carts)
+                    {
+                        if (cart.user == "")
+                        {
+                            _cart.AddToCart(cart.Id, cart.SoLuong, user.Email ?? "");
+                        }                      
+                    }
+                }
                 if (Url.IsLocalUrl(ReturnUrl))
                 {
                     return Redirect(ReturnUrl);

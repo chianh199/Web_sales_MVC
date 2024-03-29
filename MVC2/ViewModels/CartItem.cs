@@ -8,5 +8,6 @@
 		public int Price { get; set; }
 		public int SoLuong { get; set; }
 		public double ThanhTien => SoLuong * Price;
+		public string? user {  get; set; }
 	}
 }

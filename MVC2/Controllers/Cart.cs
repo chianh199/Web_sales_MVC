@@ -3,6 +3,7 @@ using MVC2.ViewModels;
 using MVC2.Interfaces;
 using Microsoft.AspNetCore.Http;
 using MVC2.Helpers;
+using Humanizer;
 
 namespace MVC2.Controllers
 {
@@ -23,7 +24,8 @@ namespace MVC2.Controllers
         }
         public IActionResult AddToCart(int id, int quantity = 1)
         {
-            var add = _cart.AddToCart(id, quantity);
+            var customer = HttpContext.User.Identity.Name ?? "";
+            var add = _cart.AddToCart(id, quantity, customer);
             return RedirectToAction("Index");
         }
         public IActionResult RemoveCart(int id)

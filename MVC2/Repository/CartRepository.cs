@@ -22,9 +22,23 @@ namespace MVC2.Repository
 			_context = context;
 			httpContext = context.HttpContext;
 		}
-		public List<CartItem> AddToCart(int id, int quantity)
+		public List<CartItem> AddToCart(int id, int quantity, string thu)
 		{
-			var gioHang = Carts;
+            var gioHang = new List<CartItem>();
+            if (thu != "")
+			{
+                foreach (var cart in Carts)
+				{
+					if(cart.user == thu)
+					{
+						gioHang.Add(cart);
+					}
+				}
+			}
+			else
+			{
+				gioHang = Carts;
+			}			
 			var item = gioHang.SingleOrDefault(p => p.Id == id);
 			if (item != null)// co product nay
 			{
@@ -36,6 +50,7 @@ namespace MVC2.Repository
                 var hangHoa = _db.Products.SingleOrDefault(p => p.Id == id);
 				var item2 = _mapper.Map<CartItem>(hangHoa);
 				item2.SoLuong = quantity;
+				item2.user = thu;
                 //var item1 = new CartItem
                 //{
                 //    Id = hangHoa.Id,
@@ -49,6 +64,7 @@ namespace MVC2.Repository
 			httpContext.Session.Set(CART_KEY, gioHang);
 			return Carts;
 		}
+
 		public void RemoveCart(int id)
 		{
 			var gioHang = Carts;
@@ -127,7 +143,7 @@ namespace MVC2.Repository
 		}
 
 		public List<CartItem> GetCartItems()
-		{
+		{			
 			return Carts;
 		}
 	}
