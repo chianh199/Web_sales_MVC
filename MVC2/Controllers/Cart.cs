@@ -22,15 +22,22 @@ namespace MVC2.Controllers
             var check = _cart.GetCartItems();
             return View(check);
         }
+        [HttpPost]
+        public IActionResult GetItemCart()
+        {          
+            var check = _cart.GetCartItems();
+            ViewData["thu"] = check.Sum(i => i.ThanhTien);
+            return PartialView("GetItemCart", check);
+        }
         public IActionResult AddToCart(int id, int quantity = 1)
         {
             var customer = HttpContext.User.Identity.Name ?? "";
             var add = _cart.AddToCart(id, quantity, customer);
             return RedirectToAction("Index");
         }
-        public IActionResult RemoveCart(int id)
+        public IActionResult RemoveCart(int id, int ajax=0)
         {
-            _cart.RemoveCart(id);
+            _cart.RemoveCart(id,ajax);
             return RedirectToAction("Index");
         }
 

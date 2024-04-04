@@ -7,7 +7,7 @@ namespace MVC2.Interfaces
 		public List<CartItem> AddToCart(int id, int quantity, string thu);
 		public List<CartItem> GetCartItems();
 
-		public void RemoveCart(int id);
+		public void RemoveCart(int id, int ajax);
 
 		public CartCustomer ThanhToan(int? idkh);
 

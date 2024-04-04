@@ -65,13 +65,20 @@ namespace MVC2.Repository
 			return Carts;
 		}
 
-		public void RemoveCart(int id)
+		public void RemoveCart(int id, int ajax)
 		{
-			var gioHang = Carts;
+            var gioHang = Carts;          	
 			var item = gioHang.SingleOrDefault(p => p.Id == id);
 			if (item != null)
 			{
-				gioHang.Remove(item);
+                if (ajax == 1)
+                {
+					item.SoLuong -= 1;
+                }
+				else
+				{
+                    gioHang.Remove(item);
+                }            
 				httpContext.Session.Set(CART_KEY, gioHang);
 			}
 		}

@@ -60,3 +60,24 @@
     </div>
 </div>
 <!-- Fruits Shop End-->
+@section Script {
+    <script type="text/javascript">
+        function Order() {
+            var idItem = parseInt($("#idProduct").val())
+            let ajax = 1;
+            console.log(idItem);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AddToCart", "Cart")",
+                data: { id: idItem, quantity: 1 },
+                dataType: "text",
+                success: function () {
+
+                },
+                error: function (req, status, error) {
+
+                }
+            });
+        }
+    </script>
+}

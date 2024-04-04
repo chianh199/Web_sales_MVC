@@ -30,53 +30,8 @@
                         <th scope="col"></th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach(var item in Model)
-                    {
-                        @if (item.user.Equals(Context.User.Identity.Name))
-                        {
-                            <tr>
-                                <th scope="row">
-                                    <div class="d-flex align-items-center">
-                                        <img src="~/img/@item.Image" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
-                                    </div>
-                                </th>
-                                <td>
-                                    <a asp-action="Detail" asp-controller="Menu" asp-route-id="@item.Id">
-                                        <p class="mb-0 mt-4">@item.Name</p>
-                                    </a>
-                            
-                                </td>
-                                <td>
-                                    <p class="mb-0 mt-4">@item.Price</p>
-                                </td>
-                                <td>
-                                    <div class="input-group quantity mt-4" style="width: 100px;">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-minus rounded-circle bg-light border">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                        </div>
-                                        <input type="text" class="form-control form-control-sm text-center border-0" value="@item.SoLuong">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0 mt-4">@item.ThanhTien</p>
-                                </td>
-                                <td>
-                                    <a asp-action="RemoveCart" asp-controller="Cart" asp-route-id="@item.Id" class="btn btn-md rounded-circle bg-light border mt-4">
-                                    <i class="fa fa-times text-danger"></i>
-                                    </a>
-                                </td>
-
-                            </tr>
-                        }                       
-                    }
+                <tbody id="viewItemCart">
+                    
                     <div asp-validation-summary="All" class="text-danger"></div>
                    
                 </tbody>
@@ -87,32 +42,99 @@
         </div>
         <div class="row g-4 justify-content-end">
             <div class="col-8"></div>
-            <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
-                <div class="bg-light rounded">
-                    <div class="p-4">
-                        <h1 class="display-6 mb-4">Tổng cộng</h1>
-                       
-                        
-                        
+                <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                    <div class="bg-light rounded">
+                        <div class="p-4">
+                            <h1 class="display-6 mb-4">Tổng cộng</h1>                      
+                        </div>
+                        <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
+                            <h5 class="mb-0 ps-4 me-4"></h5>
+                            <p id="result" class="mb-0 pe-4">@Model.Sum(p => p.ThanhTien)</p>
+                        </div>                  
+                        <a id="thanhtoan" asp-controller="Cart" asp-action="ThanhToan">
+                            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Thanh Toán</button>
+                        </a>                  
                     </div>
-                    <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
-                        <h5 class="mb-0 ps-4 me-4"></h5>
-                        <p class="mb-0 pe-4">@Model.Sum(p => p.ThanhTien)</p>
-                    </div>                  
-                    <a id="thanhtoan" asp-controller="Cart" asp-action="ThanhToan">
-                        <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Thanh Toán</button>
-                    </a>
-                    
                 </div>
             </div>
-        </div>
     </div>
 </div>
 <!-- Cart Page End -->
 @section Script{
-    <script>
-        function myFunction() {
-            document.getElementById("demo").innerHTML = "Hello World";
+    <script type="text/javascript">
+        $(document).ready(function () {
+            getItemCart();
+        });
+        function getItemCart() {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetItemCart", "Cart")",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (resquonse) {
+                    if(typeof resquonse == 'object'){
+                        $("#viewItemCart").html('');
+                    }
+                    else{
+                        console.log(resquonse);
+                        $("#viewItemCart").html(resquonse);
+                        $("#result").html(@ViewData["thu"]);
+                    }
+                },
+                error: function (req, status, error) {
+
+                }
+            });
         }
+        function remove() {
+            var idItem = parseInt($("#idItem").val())
+
+            console.log(idItem);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("RemoveCart", "Cart")",
+                data: { id: idItem, ajax: 0 },
+                dataType: "text",
+                success: function () {
+                    getItemCart();
+                },
+                error: function (req, status, error) {
+
+                }
+            });
+        }
+        function minus(){
+            var idItem = parseInt($("#idItem").val())
+            
+            console.log(idItem);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("RemoveCart", "Cart")",
+                data: { id: idItem, ajax: 1},
+                dataType: "text",
+                success: function () {
+                    getItemCart();
+                },
+                error: function (req, status, error) {
+
+                }
+            });
+         }
+        function plus() {
+            var idItem = parseInt($("#idItem").val())
+            console.log(idItem);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AddToCart", "Cart")",
+                data: { id: idItem, quantity: 1},
+                dataType: "text",
+                success: function () {
+                    getItemCart();
+                },
+                error: function (req,status,error) {
+
+                }
+            });
+        }
+        
     </script>
 }
